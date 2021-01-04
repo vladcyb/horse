@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cstdio>
+#include <cstring>
 
 const int N = 5;
 const int Nd2 = N/2 + N%2;
@@ -7,7 +8,12 @@ const int NN = N*N;
 
 FILE * pfile;
 
-void print(int a[][N]){
+int total = 0;
+
+void print(int a[][N], bool not_print){
+    total++;
+    if (not_print)
+        return;
     for(int i = 0; i < N; ++i){
         for(int j = 0; j < N; ++j){
             fprintf(pfile, "%*i", 3, a[i][j]);
@@ -15,57 +21,38 @@ void print(int a[][N]){
         fprintf(pfile, "\n");
     }
     fprintf(pfile, "\n");
+
 }
 
 void foo(int a[][N], int i0, int j0, int num){
-
     int b[N][N];
-    for(int i = 0; i < N; ++i){
-        for(int j = 0; j < N; ++j){
-            b[i][j] = a[i][j];
-        }
+    memcpy(b, a, sizeof(int)*NN);
+    
+    b[i0][j0] = num;
+    if(num++ == NN){
+        print(b, true);
+        return;
     }
 
-    if (i0 > -1 && i0 < N && j0 > -1 && j0 < N && b[i0][j0] == 0){
-        b[i0][j0] = num;
+    auto mv_l  = i0 > 0;
+    auto mv_ll = i0 > 1;
+    auto mv_r  = i0 < N - 1;
+    auto mv_rr = i0 < N - 2;
 
-        if(num == NN){
-            print(b);
-            return;
-        }
-        if(i0 > 1){
-            if(j0 > 0){
-                foo(b, i0-2, j0-1, num+1);
-            }
-            if(j0 < N - 1){
-                foo(b, i0-2, j0+1, num+1);
-            }
-        }
-        if(i0 > 0){
-            if(j0 > 1){
-                foo(b, i0-1, j0-2, num+1);
-            }
-            if(j0 < N - 2){
-                foo(b, i0-1, j0+2, num+1);
-            }
-        }
-        if (i0 < N - 1){
-            if(j0 < N - 2){
-                foo(b, i0+1, j0+2, num+1);
-            }
-            if(j0 > 1){
-                foo(b, i0+1, j0-2, num+1);
-            }
-        }
-        if (i0 < N - 2){
-            if(j0 < N - 1){
-                foo(b, i0+2, j0+1, num+1);
-            }
-            if(j0 > 0){
-                foo(b, i0+2, j0-1, num+1);
-            }
-        }
-    }
+    auto mv_t  = j0 > 0;
+    auto mv_tt = j0 > 1;
+    auto mv_b  = j0 < N - 1;
+    auto mv_bb = j0 < N - 2;
+
+    if (mv_l && mv_tt && !b[i0 - 1][j0 - 2]) foo(b, i0 - 1, j0 - 2, num);
+    if (mv_l && mv_bb && !b[i0 - 1][j0 + 2]) foo(b, i0 - 1, j0 + 2, num);
+    if (mv_ll && mv_t && !b[i0 - 2][j0 - 1]) foo(b, i0 - 2, j0 - 1, num);
+    if (mv_ll && mv_b && !b[i0 - 2][j0 + 1]) foo(b, i0 - 2, j0 + 1, num);
+
+    if (mv_r && mv_tt && !b[i0 + 1][j0 - 2]) foo(b, i0 + 1, j0 - 2, num);
+    if (mv_r && mv_bb && !b[i0 + 1][j0 + 2]) foo(b, i0 + 1, j0 + 2, num);
+    if (mv_rr && mv_t && !b[i0 + 2][j0 - 1]) foo(b, i0 + 2, j0 - 1, num);
+    if (mv_rr && mv_b && !b[i0 + 2][j0 + 1]) foo(b, i0 + 2, j0 + 1, num);
 }
 
 int main(){
