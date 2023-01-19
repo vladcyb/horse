@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp -Ofast -o horse
+	g++ main.cpp -Ofast -o run
