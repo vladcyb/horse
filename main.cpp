@@ -1,23 +1,31 @@
 #include <chrono>
-#include <cstdio>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <sstream>
+
+#define RESULTS_PER_FILE 100
 
 const int N = 5;
-const int Nd2 = N/2 + N%2;
-const int NN = N*N;
+const int NN = N * N;
 
-FILE * pfile;
+std::ofstream fout("1.txt", std::ofstream::out);
+int total = 0;
+
+std::stringstream ss;
 
 void print(int a[][N]){
     for(int i = 0; i < N; ++i){
         for(int j = 0; j < N; ++j){
-            fprintf(pfile, "%*i", 3, a[i][j]);
+            ss << std::setw(3) << a[i][j];
         }
-        fprintf(pfile, "\n");
+        ss << std::endl;
     }
-    fprintf(pfile, "\n");
+    ss << std::endl;
 }
 
-void foo(int a[][N], int i0, int j0, int num){
+void foo(int a[][N], int i0, int j0, int num) {
 
     int b[N][N];
     for(int i = 0; i < N; ++i){
@@ -30,6 +38,12 @@ void foo(int a[][N], int i0, int j0, int num){
         b[i0][j0] = num;
 
         if(num == NN){
+            if (total % RESULTS_PER_FILE == 0) {
+              fout << ss.rdbuf();
+              fout.close();
+              fout.open(std::to_string(total / RESULTS_PER_FILE + 1) + ".txt");
+            }
+            ++total;
             print(b);
             return;
         }
@@ -69,8 +83,6 @@ void foo(int a[][N], int i0, int j0, int num){
 }
 
 int main(){
-
-    pfile = fopen("output.txt", "w");
     auto startTime = std::chrono::steady_clock::now();
     int a[N][N];
 
@@ -80,17 +92,22 @@ int main(){
         }
     }
 
-    for(int i = 0; i < Nd2; ++i){
-        for(int j = 0; j < Nd2; ++j){
+    for(int i = 0; i < N; ++i){
+        for(int j = 0; j < N; ++j){
             foo(a, i, j, 1);
         }
     }
 
-
-    fclose(pfile);
     auto stopTime = std::chrono::steady_clock::now();
-    int ms = std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - startTime).count();
-    printf("%s%i%s", "Program executed in ",  ms, " milliseconds.\n");
-
+    int time = std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - startTime).count();
+    std::ofstream result("summary.txt", std::ofstream::out);
+    result << "Total: " << total << "." << std::endl;
+    result << "Every file has maximum " << RESULTS_PER_FILE << " variants." << std::endl;
+    result << "Program executed in " <<  time << " milliseconds.\n";
+    result.close();
+    if (!ss.eof()) {
+      fout << ss.rdbuf();
+    }
+    fout.close();
     return 0;
 }
