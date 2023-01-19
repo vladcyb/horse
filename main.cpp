@@ -45,36 +45,38 @@ void foo(int a[][N], int i0, int j0, int num) {
             print(b);
             return;
         }
+        const int numPlusOne = num + 1;
+
         if(i0 > 1){
             if(j0 > 0){
-                foo(b, i0-2, j0-1, num+1);
+                foo(b, i0-2, j0-1, numPlusOne);
             }
             if(j0 < N - 1){
-                foo(b, i0-2, j0+1, num+1);
+                foo(b, i0-2, j0+1, numPlusOne);
             }
         }
         if(i0 > 0){
             if(j0 > 1){
-                foo(b, i0-1, j0-2, num+1);
+                foo(b, i0-1, j0-2, numPlusOne);
             }
             if(j0 < N - 2){
-                foo(b, i0-1, j0+2, num+1);
+                foo(b, i0-1, j0+2, numPlusOne);
             }
         }
         if (i0 < N - 1){
             if(j0 < N - 2){
-                foo(b, i0+1, j0+2, num+1);
+                foo(b, i0+1, j0+2, numPlusOne);
             }
             if(j0 > 1){
-                foo(b, i0+1, j0-2, num+1);
+                foo(b, i0+1, j0-2, numPlusOne);
             }
         }
         if (i0 < N - 2){
             if(j0 < N - 1){
-                foo(b, i0+2, j0+1, num+1);
+                foo(b, i0+2, j0+1, numPlusOne);
             }
             if(j0 > 0){
-                foo(b, i0+2, j0-1, num+1);
+                foo(b, i0+2, j0-1, numPlusOne);
             }
         }
     }
