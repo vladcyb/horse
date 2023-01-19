@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm>
+#include <iterator>
 
 #define RESULTS_PER_FILE 100
 
@@ -28,11 +30,7 @@ void print(int a[][N]){
 void foo(int a[][N], int i0, int j0, int num) {
 
     int b[N][N];
-    for(int i = 0; i < N; ++i){
-        for(int j = 0; j < N; ++j){
-            b[i][j] = a[i][j];
-        }
-    }
+    std::copy(a[0], a[0] + N * N, b[0]);
 
     if (i0 > -1 && i0 < N && j0 > -1 && j0 < N && b[i0][j0] == 0){
         b[i0][j0] = num;
