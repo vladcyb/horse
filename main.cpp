@@ -31,7 +31,7 @@ void foo(int a[][N], int i0, int j0, int num) {
     int b[N][N];
     std::copy(a[0], a[0] + N * N, b[0]);
 
-    if (i0 > -1 && i0 < N && j0 > -1 && j0 < N && b[i0][j0] == 0){
+    if (b[i0][j0] == 0){
         b[i0][j0] = num;
 
         if(num == NN){
